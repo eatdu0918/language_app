@@ -1,0 +1,112 @@
+.container { max-width: 640px; margin: 0 auto; }
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.header h1 { font-size: 1.5rem; font-weight: 700; }
+
+.langSwitch {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--color-bg);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.langSwitch button {
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+}
+
+.langSwitch button.active {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.progress {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s;
+  position: relative;
+}
+
+.card:hover { border-color: var(--color-primary); }
+
+.front, .back { width: 100%; }
+
+.back { display: none; }
+.flipped .front { display: none; }
+.flipped .back { display: block; }
+
+.word { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+.reading { font-size: 1rem; color: var(--color-text-muted); margin-bottom: 1rem; }
+
+.speakBtn {
+  font-size: 1.5rem;
+  background: var(--color-bg);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.speakBtn:hover { transform: scale(1.1); }
+
+.meaning { font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; }
+.example { color: var(--color-text-muted); margin-bottom: 0.5rem; font-style: italic; }
+.translation { font-size: 0.875rem; color: var(--color-text-muted); }
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.qualityBtn {
+  padding: 0.6rem 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+}
+
+.qualityBtn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}

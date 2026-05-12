@@ -7,7 +7,13 @@
     "build": "nest build",
     "start": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "migration:run": "dotenv -e .env -- typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
+    "migration:revert": "dotenv -e .env -- typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
+    "migration:generate": "dotenv -e .env -- typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
+    "migration:show": "dotenv -e .env -- typeorm-ts-node-commonjs migration:show -d src/database/data-source.ts"
   },
   "dependencies": {
     "@language-app/shared": "workspace:*",
@@ -36,8 +42,11 @@
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.15",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.10.2",
     "@types/passport-jwt": "^4.0.1",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.7.2"
   }
 }

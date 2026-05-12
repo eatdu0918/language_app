@@ -26,6 +26,7 @@ import { SpeechModule } from './speech/speech.module'
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: config.get('NODE_ENV') === 'development',
+        migrationsRun: config.get('NODE_ENV') === 'production',
         logging: config.get('NODE_ENV') === 'development',
       }),
     }),

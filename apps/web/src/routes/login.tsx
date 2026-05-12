@@ -20,12 +20,12 @@ export function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const { accessToken } = await api.post<AuthTokens>(
+      const { accessToken, refreshToken } = await api.post<AuthTokens>(
         mode === 'login' ? '/auth/login' : '/auth/register',
         mode === 'login' ? { email, password } : { email, name, password },
       )
       const user = await api.get<UserProfile>('/users/me')
-      setAuth(user, accessToken)
+      setAuth(user, accessToken, refreshToken)
       void router.navigate({ to: '/' })
     } catch (err) {
       setError(err instanceof Error ? err.message : '오류가 발생했습니다')

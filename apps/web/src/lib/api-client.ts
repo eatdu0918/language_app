@@ -9,6 +9,31 @@ class ApiError extends Error {
   }
 }
 
+let isRefreshing = false
+let refreshQueue: Array<(token: string | null) => void> = []
+
+async function tryRefresh(): Promise<string | null> {
+  const refreshToken = localStorage.getItem('refreshToken')
+  if (!refreshToken) return null
+
+  const res = await fetch(`${BASE_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  })
+
+  if (!res.ok) {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    return null
+  }
+
+  const data = (await res.json()) as { accessToken: string; refreshToken: string }
+  localStorage.setItem('accessToken', data.accessToken)
+  localStorage.setItem('refreshToken', data.refreshToken)
+  return data.accessToken
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = localStorage.getItem('accessToken')
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -19,6 +44,25 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       ...init?.headers,
     },
   })
+
+  if (res.status === 401 && !path.startsWith('/auth/')) {
+    if (isRefreshing) {
+      const newToken = await new Promise<string | null>((resolve) => {
+        refreshQueue.push(resolve)
+      })
+      if (!newToken) throw new ApiError(401, 'Unauthorized')
+      return request<T>(path, init)
+    }
+
+    isRefreshing = true
+    const newToken = await tryRefresh()
+    isRefreshing = false
+    refreshQueue.forEach((resolve) => resolve(newToken))
+    refreshQueue = []
+
+    if (!newToken) throw new ApiError(401, 'Unauthorized')
+    return request<T>(path, init)
+  }
 
   if (!res.ok) {
     const err = (await res.json().catch(() => ({ message: res.statusText }))) as { message: string }

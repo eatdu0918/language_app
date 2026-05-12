@@ -4,19 +4,29 @@ import type { UserProfile } from '@language-app/shared'
 interface AuthState {
   user: UserProfile | null
   accessToken: string | null
-  setAuth: (user: UserProfile, token: string) => void
+  refreshToken: string | null
+  setAuth: (user: UserProfile, accessToken: string, refreshToken: string) => void
+  setTokens: (accessToken: string, refreshToken: string) => void
   logout: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   accessToken: localStorage.getItem('accessToken'),
-  setAuth: (user, token) => {
-    localStorage.setItem('accessToken', token)
-    set({ user, accessToken: token })
+  refreshToken: localStorage.getItem('refreshToken'),
+  setAuth: (user, accessToken, refreshToken) => {
+    localStorage.setItem('accessToken', accessToken)
+    localStorage.setItem('refreshToken', refreshToken)
+    set({ user, accessToken, refreshToken })
+  },
+  setTokens: (accessToken, refreshToken) => {
+    localStorage.setItem('accessToken', accessToken)
+    localStorage.setItem('refreshToken', refreshToken)
+    set({ accessToken, refreshToken })
   },
   logout: () => {
     localStorage.removeItem('accessToken')
-    set({ user: null, accessToken: null })
+    localStorage.removeItem('refreshToken')
+    set({ user: null, accessToken: null, refreshToken: null })
   },
 }))

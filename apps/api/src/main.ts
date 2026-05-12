@@ -4,6 +4,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
+import { GlobalExceptionFilter } from './common/http-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
@@ -17,6 +18,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   )
+  app.useGlobalFilters(new GlobalExceptionFilter())
 
   const config = new DocumentBuilder()
     .setTitle('Language App API')

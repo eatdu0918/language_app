@@ -41,7 +41,9 @@ export class ConversationService {
 
     await this.messageRepo.save({ session: { id: sessionId }, role: 'user', content: userText })
 
-    const history = session.messages.map((m) => ({ role: m.role, content: m.content }))
+    // 가장 최근 20개 메시지만 AI 컨텍스트로 전달 (토큰 폭발 방지)
+    const recentMessages = session.messages.slice(-20)
+    const history = recentMessages.map((m) => ({ role: m.role, content: m.content }))
     history.push({ role: 'user', content: userText })
 
     let fullResponse = ''

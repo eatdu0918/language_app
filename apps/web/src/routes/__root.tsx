@@ -1,14 +1,35 @@
-import { Outlet, Link, useRouter } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { Outlet, Link, useRouter, useLocation } from '@tanstack/react-router'
 import { useAuthStore } from '../stores/auth.store'
 import styles from './__root.module.css'
 
 export function RootLayout() {
-  const { user, logout } = useAuthStore()
+  const { user, logout, initialized, initialize } = useAuthStore()
   const router = useRouter()
+  const location = useLocation()
+
+  useEffect(() => {
+    void initialize()
+  }, [initialize])
+
+  useEffect(() => {
+    if (!initialized) return
+    if (!user && location.pathname !== '/login') {
+      void router.navigate({ to: '/login' })
+    }
+  }, [initialized, user, location.pathname, router])
 
   const handleLogout = () => {
     logout()
     void router.navigate({ to: '/login' })
+  }
+
+  if (!initialized) {
+    return (
+      <div className={styles.loading}>
+        <p>로딩 중...</p>
+      </div>
+    )
   }
 
   return (

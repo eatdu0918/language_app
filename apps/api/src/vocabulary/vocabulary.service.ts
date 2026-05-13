@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, LessThanOrEqual, Between, MoreThan } from 'typeorm'
 import { AiService } from '../ai/ai.service'
+import { RedisService } from '../redis/redis.service'
 import { VocabularyWord } from './vocabulary-word.entity'
 import { VocabularyProgress } from './vocabulary-progress.entity'
 import { User } from '../users/user.entity'
@@ -24,7 +25,12 @@ export class VocabularyService {
     @InjectRepository(VocabularyWord) private readonly wordRepo: Repository<VocabularyWord>,
     @InjectRepository(VocabularyProgress) private readonly progressRepo: Repository<VocabularyProgress>,
     private readonly aiService: AiService,
+    private readonly redis: RedisService,
   ) {}
+
+  private dueKey(userId: string, language: SupportedLanguage) {
+    return `vocabulary:due:${userId}:${language}`
+  }
 
   async getWordBank(
     language: SupportedLanguage,
@@ -69,11 +75,16 @@ export class VocabularyService {
       dueDate,
       lastReviewedAt: null,
     })
+    await this.redis.delPattern(`vocabulary:due:${userId}:*`)
     return this.progressRepo.save(progress)
   }
 
   async getDueWords(userId: string, language: SupportedLanguage, limit = 20) {
-    return this.progressRepo.find({
+    const cacheKey = this.dueKey(userId, language)
+    const cached = await this.redis.get<VocabularyProgress[]>(cacheKey)
+    if (cached) return cached
+
+    const result = await this.progressRepo.find({
       where: {
         user: { id: userId },
         word: { language },
@@ -83,6 +94,9 @@ export class VocabularyService {
       take: limit,
       order: { dueDate: 'ASC' },
     })
+
+    await this.redis.set(cacheKey, result, 60)
+    return result
   }
 
   async reviewWord(userId: string, wordId: string, quality: number) {
@@ -100,7 +114,7 @@ export class VocabularyService {
     const dueDate = new Date()
     dueDate.setDate(dueDate.getDate() + interval)
 
-    return this.progressRepo.save({
+    const updated = await this.progressRepo.save({
       ...progress,
       easeFactor: ef,
       repetitions,
@@ -108,6 +122,9 @@ export class VocabularyService {
       dueDate,
       lastReviewedAt: new Date(),
     })
+
+    await this.redis.delPattern(`vocabulary:due:${userId}:*`)
+    return updated
   }
 
   async generateExamples(wordId: string) {

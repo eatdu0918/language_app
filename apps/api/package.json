@@ -6,6 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
+    "seed": "ts-node --project tsconfig.json src/seed.ts",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "test": "jest",
@@ -47,6 +48,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.2",
     "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.20.0",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.9",
     "typescript": "^5.7.2"

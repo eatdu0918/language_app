@@ -13,10 +13,19 @@ interface CreateDocumentForm {
   tags: string
 }
 
-const LEVELS: ProficiencyLevel[] = ['beginner', 'elementary', 'intermediate', 'advanced']
+const LEVELS: Array<{ value: ProficiencyLevel | ''; label: string }> = [
+  { value: '', label: '전체' },
+  { value: 'beginner', label: '초급' },
+  { value: 'elementary', label: '초중급' },
+  { value: 'intermediate', label: '중급' },
+  { value: 'advanced', label: '고급' },
+]
+
+const LEVEL_OPTIONS: ProficiencyLevel[] = ['beginner', 'elementary', 'intermediate', 'advanced']
 
 export function DocumentsPage() {
   const [lang, setLang] = useState<SupportedLanguage>('en')
+  const [levelFilter, setLevelFilter] = useState<ProficiencyLevel | ''>('')
   const [selected, setSelected] = useState<Document | null>(null)
   const [adapted, setAdapted] = useState<string | null>(null)
   const [recording, setRecording] = useState(false)
@@ -35,8 +44,12 @@ export function DocumentsPage() {
   const queryClient = useQueryClient()
 
   const { data: documentsPage, isLoading } = useQuery({
-    queryKey: ['documents', lang, page],
-    queryFn: () => api.get<PaginatedResponse<Document>>(`/documents?language=${lang}&page=${page}&limit=12`),
+    queryKey: ['documents', lang, page, levelFilter],
+    queryFn: () => {
+      const params = new URLSearchParams({ language: lang, page: String(page), limit: '12' })
+      if (levelFilter) params.set('level', levelFilter)
+      return api.get<PaginatedResponse<Document>>(`/documents?${params.toString()}`)
+    },
   })
 
   const adaptMutation = useMutation({
@@ -102,8 +115,8 @@ export function DocumentsPage() {
             </button>
             <select onChange={(e) => adaptMutation.mutate({ id: selected.id, level: e.target.value as ProficiencyLevel })}>
               <option value="">레벨 조정</option>
-              {LEVELS.map((l) => (
-                <option key={l} value={l}>{l}</option>
+              {LEVEL_OPTIONS.map((l) => (
+                <option key={l} value={l}>{LEVELS.find((lv) => lv.value === l)?.label ?? l}</option>
               ))}
             </select>
             <button
@@ -131,28 +144,39 @@ export function DocumentsPage() {
         <h1>문서 읽기</h1>
         <div className={styles.headerRight}>
           <div className={styles.langSwitch}>
-            <button className={lang === 'en' ? styles.active : ''} onClick={() => { setLang('en'); setPage(1) }}>영어</button>
-            <button className={lang === 'ja' ? styles.active : ''} onClick={() => { setLang('ja'); setPage(1) }}>일본어</button>
+            <button className={lang === 'en' ? styles.active : ''} onClick={() => { setLang('en'); setPage(1); setLevelFilter('') }}>영어</button>
+            <button className={lang === 'ja' ? styles.active : ''} onClick={() => { setLang('ja'); setPage(1); setLevelFilter('') }}>일본어</button>
           </div>
           <button className={styles.addBtn} onClick={() => setShowForm(true)}>+ 문서 추가</button>
         </div>
       </div>
 
+      <div className={styles.levelFilter}>
+        {LEVELS.map((lv) => (
+          <button
+            key={lv.value}
+            className={levelFilter === lv.value ? styles.levelActive : ''}
+            onClick={() => { setLevelFilter(lv.value); setPage(1) }}
+          >
+            {lv.label}
+          </button>
+        ))}
+      </div>
+
       {isLoading ? (
         <p className={styles.loading}>불러오는 중...</p>
+      ) : documents?.length === 0 ? (
+        <p className={styles.loading}>해당 레벨의 문서가 없습니다.</p>
       ) : (
         <>
           <div className={styles.grid}>
             {documents?.map((doc) => (
               <button key={doc.id} className={styles.docCard} onClick={() => setSelected(doc)}>
-                <span className={styles.level}>{doc.level}</span>
+                <span className={styles.level}>{LEVELS.find((lv) => lv.value === doc.level)?.label ?? doc.level}</span>
                 <h2>{doc.title}</h2>
                 <p>{doc.estimatedReadingMinutes}분 읽기</p>
               </button>
             ))}
-            {documents?.length === 0 && (
-              <p className={styles.empty}>문서가 없습니다. 문서를 추가해보세요.</p>
-            )}
           </div>
 
           {totalPages > 1 && (
@@ -199,7 +223,7 @@ export function DocumentsPage() {
                     value={form.level}
                     onChange={(e) => setForm({ ...form, level: e.target.value as ProficiencyLevel })}
                   >
-                    {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                    {LEVEL_OPTIONS.map((l) => <option key={l} value={l}>{LEVELS.find((lv) => lv.value === l)?.label ?? l}</option>)}
                   </select>
                 </div>
               </div>

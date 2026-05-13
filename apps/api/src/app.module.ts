@@ -5,6 +5,7 @@ import { ThrottlerModule } from '@nestjs/throttler'
 import { SeedModule } from './seed/seed.module'
 import { PlacementModule } from './placement/placement.module'
 import { PaymentsModule } from './payments/payments.module'
+import { RedisModule } from './redis/redis.module'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { VocabularyModule } from './vocabulary/vocabulary.module'
@@ -39,6 +40,7 @@ import { SpeechModule } from './speech/speech.module'
     SeedModule,
     PlacementModule,
     PaymentsModule,
+    RedisModule,
     AuthModule,
     UsersModule,
     VocabularyModule,

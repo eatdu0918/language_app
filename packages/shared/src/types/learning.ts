@@ -13,6 +13,12 @@ export interface VocabularyWord {
   tags: string[]
 }
 
+export interface VocabularyStats {
+  dueToday: number
+  reviewedToday: number
+  totalLearned: number
+}
+
 export interface VocabularyProgress {
   id: string
   word: VocabularyWord

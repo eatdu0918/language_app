@@ -43,6 +43,11 @@ class CreateWordDto {
 export class VocabularyController {
   constructor(private readonly vocabularyService: VocabularyService) {}
 
+  @Get('stats')
+  getStats(@Request() req: { user: { sub: string } }) {
+    return this.vocabularyService.getStats(req.user.sub)
+  }
+
   @Get('words')
   @ApiOperation({ summary: '단어 뱅크 조회', description: '전체 단어 목록 (페이지네이션)' })
   @ApiQuery({ name: 'language', enum: ['en', 'ja'], required: false })

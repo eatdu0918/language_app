@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ThrottlerModule } from '@nestjs/throttler'
+import { SeedModule } from './seed/seed.module'
+import { PlacementModule } from './placement/placement.module'
+import { PaymentsModule } from './payments/payments.module'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { VocabularyModule } from './vocabulary/vocabulary.module'
@@ -26,12 +29,16 @@ import { SpeechModule } from './speech/speech.module'
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: config.get('NODE_ENV') === 'development',
+        migrationsRun: config.get('NODE_ENV') === 'production',
         logging: config.get('NODE_ENV') === 'development',
       }),
     }),
 
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
 
+    SeedModule,
+    PlacementModule,
+    PaymentsModule,
     AuthModule,
     UsersModule,
     VocabularyModule,

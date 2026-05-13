@@ -6,6 +6,8 @@ import { VocabularyPage } from './routes/vocabulary'
 import { DocumentsPage } from './routes/documents'
 import { ConversationPage } from './routes/conversation'
 import { LoginPage } from './routes/login'
+import { PlacementPage } from './routes/placement'
+import { BillingPage } from './routes/billing'
 
 const rootRoute = createRootRoute({ component: RootLayout })
 
@@ -14,6 +16,8 @@ const dashboardRoute = createRoute({ getParentRoute: () => rootRoute, path: '/',
 const vocabularyRoute = createRoute({ getParentRoute: () => rootRoute, path: '/vocabulary', component: VocabularyPage })
 const documentsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/documents', component: DocumentsPage })
 const conversationRoute = createRoute({ getParentRoute: () => rootRoute, path: '/conversation', component: ConversationPage })
+const placementRoute = createRoute({ getParentRoute: () => rootRoute, path: '/placement', component: PlacementPage })
+const billingRoute = createRoute({ getParentRoute: () => rootRoute, path: '/billing', component: BillingPage })
 
 export const routeTree = rootRoute.addChildren([
   loginRoute,
@@ -21,4 +25,6 @@ export const routeTree = rootRoute.addChildren([
   vocabularyRoute,
   documentsRoute,
   conversationRoute,
+  placementRoute,
+  billingRoute,
 ])

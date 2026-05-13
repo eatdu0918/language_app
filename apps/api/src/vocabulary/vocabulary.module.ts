@@ -10,5 +10,6 @@ import { VocabularyController } from './vocabulary.controller'
   imports: [TypeOrmModule.forFeature([VocabularyWord, VocabularyProgress]), AiModule],
   providers: [VocabularyService],
   controllers: [VocabularyController],
+  exports: [VocabularyService],
 })
 export class VocabularyModule {}

@@ -7,7 +7,13 @@
     "build": "nest build",
     "start": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "migration:run": "dotenv -e .env -- typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
+    "migration:revert": "dotenv -e .env -- typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
+    "migration:generate": "dotenv -e .env -- typeorm-ts-node-commonjs migration:generate -d src/database/data-source.ts",
+    "migration:show": "dotenv -e .env -- typeorm-ts-node-commonjs migration:show -d src/database/data-source.ts"
   },
   "dependencies": {
     "@language-app/shared": "workspace:*",
@@ -20,6 +26,7 @@
     "@nestjs/swagger": "^8.1.0",
     "@nestjs/throttler": "^6.3.0",
     "@nestjs/typeorm": "^10.0.2",
+    "@anthropic-ai/sdk": "^0.39.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -29,6 +36,7 @@
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "stripe": "^17.0.0",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
@@ -36,8 +44,11 @@
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.15",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.10.2",
     "@types/passport-jwt": "^4.0.1",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.7.2"
   }
 }

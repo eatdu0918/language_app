@@ -4,9 +4,25 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
+import { GlobalExceptionFilter } from './common/http-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
+
+  // Store raw body for Stripe webhook verification
+  app.getHttpAdapter().getInstance().addContentTypeParser(
+    'application/json',
+    { parseAs: 'buffer' },
+    (_req: unknown, body: Buffer, done: (err: Error | null, result?: unknown) => void) => {
+      try {
+        const parsed = JSON.parse(body.toString()) as unknown
+        ;((_req as Record<string, unknown>)['rawBody'] = body)
+        done(null, parsed)
+      } catch (e) {
+        done(e as Error)
+      }
+    },
+  )
 
   app.enableCors({ origin: process.env['FRONTEND_URL'] ?? 'http://localhost:5173' })
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' })
@@ -17,6 +33,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   )
+  app.useGlobalFilters(new GlobalExceptionFilter())
 
   const config = new DocumentBuilder()
     .setTitle('Language App API')

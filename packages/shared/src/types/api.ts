@@ -33,7 +33,8 @@ export interface UserProfile {
   name: string
   subscriptionTier: import('./language').SubscriptionTier
   targetLanguages: import('./language').SupportedLanguage[]
-  level: Record<import('./language').SupportedLanguage, import('./language').ProficiencyLevel>
+  levels: Record<import('./language').SupportedLanguage, import('./language').ProficiencyLevel>
+  placementCompleted: boolean
   createdAt: string
 }
 

@@ -1,5 +1,18 @@
 import type { SupportedLanguage, ProficiencyLevel } from './language'
 
+// Placement test
+export interface PlacementQuestion {
+  id: string
+  question: string
+  options: string[]
+}
+
+export interface PlacementResult {
+  level: ProficiencyLevel
+  score: number
+  total: number
+}
+
 // Vocabulary
 export interface VocabularyWord {
   id: string

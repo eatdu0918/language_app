@@ -27,6 +27,9 @@ export class User {
   @Column({ type: 'jsonb', default: { en: 'beginner', ja: 'beginner' } })
   levels!: Record<SupportedLanguage, ProficiencyLevel>
 
+  @Column({ default: false })
+  placementCompleted!: boolean
+
   @Column({ nullable: true, type: 'varchar' })
   stripeCustomerId!: string | null
 

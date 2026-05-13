@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "paths": {
+      "@language-app/shared": ["../../packages/shared/src/index.ts"]
+    }
+  }
+}

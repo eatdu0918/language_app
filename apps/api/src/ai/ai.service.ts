@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common'
-import { OllamaProvider } from './providers/ollama.provider'
-import type { SupportedLanguage } from '@language-app/shared'
+import { Injectable, Inject } from '@nestjs/common'
+import { AI_PROVIDER } from './ai.module'
+import type { AIProvider, SupportedLanguage } from '@language-app/shared'
 
 @Injectable()
 export class AiService {
-  constructor(private readonly ollama: OllamaProvider) {}
+  constructor(@Inject(AI_PROVIDER) private readonly provider: AIProvider) {}
 
   async generateVocabularyExample(word: string, language: SupportedLanguage): Promise<string> {
     const langName = language === 'en' ? 'English' : 'Japanese'
-    return this.ollama.chat([
+    return this.provider.chat([
       {
         role: 'system',
         content: `You are a ${langName} language teacher. Respond in JSON only.`,
@@ -21,12 +21,9 @@ Return JSON: { "examples": [{ "sentence": string, "translation": string }] }`,
     ])
   }
 
-  async analyzeConversation(
-    transcript: string,
-    language: SupportedLanguage,
-  ): Promise<string> {
+  async analyzeConversation(transcript: string, language: SupportedLanguage): Promise<string> {
     const langName = language === 'en' ? 'English' : 'Japanese'
-    return this.ollama.chat([
+    return this.provider.chat([
       {
         role: 'system',
         content: `You are a ${langName} language coach for Korean speakers. Respond in Korean + JSON.`,
@@ -46,7 +43,7 @@ Return JSON: { "corrections": [{ "original": string, "corrected": string, "expla
     scenario: string,
   ): AsyncIterable<string> {
     const langName = language === 'en' ? 'English' : 'Japanese'
-    yield* this.ollama.stream([
+    yield* this.provider.stream([
       {
         role: 'system',
         content: `You are a friendly ${langName} conversation partner for a Korean learner.
@@ -65,7 +62,7 @@ Scenario: ${scenario}.
     language: SupportedLanguage,
   ): Promise<string> {
     const langName = language === 'en' ? 'English' : 'Japanese'
-    return this.ollama.chat([
+    return this.provider.chat([
       { role: 'system', content: `You are a ${langName} text editor.` },
       {
         role: 'user',

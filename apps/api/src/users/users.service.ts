@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { User } from './user.entity'
+import type { SupportedLanguage, ProficiencyLevel } from '@language-app/shared'
 
 @Injectable()
 export class UsersService {
@@ -27,5 +28,16 @@ export class UsersService {
 
   async validatePassword(user: User, password: string): Promise<boolean> {
     return bcrypt.compare(password, user.passwordHash)
+  }
+
+  async updateSubscription(userId: string, stripeCustomerId: string, tier: 'free' | 'premium') {
+    await this.repo.update(userId, { stripeCustomerId, subscriptionTier: tier as any })
+  }
+
+  async completePlacement(userId: string, language: SupportedLanguage, level: ProficiencyLevel) {
+    const user = await this.repo.findOneByOrFail({ id: userId })
+    user.levels = { ...user.levels, [language]: level }
+    user.placementCompleted = true
+    return this.repo.save(user)
   }
 }

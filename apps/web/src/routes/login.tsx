@@ -26,7 +26,8 @@ export function LoginPage() {
       )
       const user = await api.get<UserProfile>('/users/me')
       setAuth(user, accessToken, refreshToken)
-      void router.navigate({ to: '/' })
+      const destination = (!user.placementCompleted || mode === 'register') ? '/placement' : '/'
+      void router.navigate({ to: destination })
     } catch (err) {
       setError(err instanceof Error ? err.message : '오류가 발생했습니다')
     } finally {

@@ -21,6 +21,7 @@ export function RootLayout() {
             <Link to="/vocabulary" activeProps={{ className: styles.active }}>단어</Link>
             <Link to="/documents" activeProps={{ className: styles.active }}>문서</Link>
             <Link to="/conversation" activeProps={{ className: styles.active }}>회화</Link>
+            <Link to="/billing" activeProps={{ className: styles.active }}>구독</Link>
           </div>
           <button onClick={handleLogout} className={styles.logout}>로그아웃</button>
         </nav>

@@ -5,8 +5,17 @@ import { speak, SpeechRecorder, transcribeAudio } from '../lib/speech'
 import type { Document, SupportedLanguage, ProficiencyLevel } from '@language-app/shared'
 import styles from './documents.module.css'
 
+const LEVELS: Array<{ value: ProficiencyLevel | ''; label: string }> = [
+  { value: '', label: '전체' },
+  { value: 'beginner', label: '초급' },
+  { value: 'elementary', label: '초중급' },
+  { value: 'intermediate', label: '중급' },
+  { value: 'advanced', label: '고급' },
+]
+
 export function DocumentsPage() {
   const [lang, setLang] = useState<SupportedLanguage>('en')
+  const [levelFilter, setLevelFilter] = useState<ProficiencyLevel | ''>('')
   const [selected, setSelected] = useState<Document | null>(null)
   const [adapted, setAdapted] = useState<string | null>(null)
   const [recording, setRecording] = useState(false)
@@ -14,8 +23,12 @@ export function DocumentsPage() {
   const [transcript, setTranscript] = useState('')
 
   const { data: documents, isLoading } = useQuery({
-    queryKey: ['documents', lang],
-    queryFn: () => api.get<Document[]>(`/documents?language=${lang}`),
+    queryKey: ['documents', lang, levelFilter],
+    queryFn: () => {
+      const params = new URLSearchParams({ language: lang })
+      if (levelFilter) params.set('level', levelFilter)
+      return api.get<Document[]>(`/documents?${params.toString()}`)
+    },
   })
 
   const adaptMutation = useMutation({
@@ -52,7 +65,7 @@ export function DocumentsPage() {
             <select onChange={(e) => adaptMutation.mutate({ id: selected.id, level: e.target.value as ProficiencyLevel })}>
               <option value="">레벨 조정</option>
               {(['beginner', 'elementary', 'intermediate', 'advanced'] as ProficiencyLevel[]).map((l) => (
-                <option key={l} value={l}>{l}</option>
+                <option key={l} value={l}>{LEVELS.find((lv) => lv.value === l)?.label ?? l}</option>
               ))}
             </select>
           </div>
@@ -73,18 +86,32 @@ export function DocumentsPage() {
       <div className={styles.header}>
         <h1>문서 읽기</h1>
         <div className={styles.langSwitch}>
-          <button className={lang === 'en' ? styles.active : ''} onClick={() => setLang('en')}>영어</button>
-          <button className={lang === 'ja' ? styles.active : ''} onClick={() => setLang('ja')}>일본어</button>
+          <button className={lang === 'en' ? styles.active : ''} onClick={() => { setLang('en'); setLevelFilter('') }}>영어</button>
+          <button className={lang === 'ja' ? styles.active : ''} onClick={() => { setLang('ja'); setLevelFilter('') }}>일본어</button>
         </div>
+      </div>
+
+      <div className={styles.levelFilter}>
+        {LEVELS.map((lv) => (
+          <button
+            key={lv.value}
+            className={levelFilter === lv.value ? styles.levelActive : ''}
+            onClick={() => setLevelFilter(lv.value)}
+          >
+            {lv.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
         <p className={styles.loading}>불러오는 중...</p>
+      ) : documents?.length === 0 ? (
+        <p className={styles.loading}>해당 레벨의 문서가 없습니다.</p>
       ) : (
         <div className={styles.grid}>
           {documents?.map((doc) => (
             <button key={doc.id} className={styles.docCard} onClick={() => setSelected(doc)}>
-              <span className={styles.level}>{doc.level}</span>
+              <span className={styles.level}>{LEVELS.find((lv) => lv.value === doc.level)?.label ?? doc.level}</span>
               <h2>{doc.title}</h2>
               <p>{doc.estimatedReadingMinutes}분 읽기</p>
             </button>

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ThrottlerModule } from '@nestjs/throttler'
+import { RedisModule } from './redis/redis.module'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { VocabularyModule } from './vocabulary/vocabulary.module'
@@ -32,6 +33,7 @@ import { SpeechModule } from './speech/speech.module'
 
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
 
+    RedisModule,
     AuthModule,
     UsersModule,
     VocabularyModule,

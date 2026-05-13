@@ -13,7 +13,32 @@
 .langSwitch button { padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; color: var(--color-text-muted); transition: all 0.15s; }
 .langSwitch button.active { background: var(--color-surface); color: var(--color-text); }
 
-.loading { color: var(--color-text-muted); }
+.loading { color: var(--color-text-muted); margin-top: 1rem; }
+
+.levelFilter {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.levelFilter button {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  transition: all 0.15s;
+}
+
+.levelFilter button:hover { border-color: var(--color-primary); color: var(--color-text); }
+
+.levelActive {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+}
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
 

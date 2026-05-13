@@ -1,4 +1,4 @@
-.container { max-width: 640px; margin: 0 auto; }
+.container { max-width: 680px; margin: 0 auto; }
 
 .center {
   display: flex;
@@ -109,4 +109,102 @@
 .qualityBtn:hover:not(:disabled) {
   border-color: var(--color-primary);
   color: var(--color-text);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.addBtn {
+  padding: 0.4rem 0.9rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.addBtn:hover { background: var(--color-primary-hover); }
+
+/* Add word form */
+.addForm {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.addFormTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.formGroup label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.formActions button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-border);
+  transition: all 0.15s;
+}
+.formActions button:hover { border-color: var(--color-primary); }
+
+.submitBtn {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+.submitBtn:hover:not(:disabled) { background: var(--color-primary-hover) !important; }
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.formError {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-error);
+  text-align: right;
 }

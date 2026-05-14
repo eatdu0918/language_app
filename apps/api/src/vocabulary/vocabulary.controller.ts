@@ -49,19 +49,26 @@ export class VocabularyController {
   }
 
   @Get('words')
-  @ApiOperation({ summary: '단어 뱅크 조회', description: '전체 단어 목록 (페이지네이션)' })
+  @ApiOperation({ summary: '단어 뱅크 조회', description: '전체 단어 목록 (페이지네이션). tag 파라미터로 시험 레벨 필터 가능 (예: JLPT-N3, TOEIC-600)' })
   @ApiQuery({ name: 'language', enum: ['en', 'ja'], required: false })
   @ApiQuery({ name: 'level', enum: ['beginner', 'elementary', 'intermediate', 'advanced'], required: false })
+  @ApiQuery({ name: 'tag', description: 'JLPT-N5 | JLPT-N4 | JLPT-N3 | JLPT-N2 | JLPT-N1 | TOEIC-200 | TOEIC-400 | TOEIC-600 | TOEIC-800 | TOEIC-900', required: false })
   @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, example: 20 })
-  @ApiResponse({ status: 200, description: 'PaginatedResponse<VocabularyWord>' })
   getWordBank(
     @Query('language') language: SupportedLanguage = 'en',
     @Query('level') level?: ProficiencyLevel,
+    @Query('tag') tag?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.vocabularyService.getWordBank(language, level, page ? Number(page) : 1, limit ? Math.min(Number(limit), 50) : 20)
+    return this.vocabularyService.getWordBank(
+      language,
+      level,
+      page ? Number(page) : 1,
+      limit ? Math.min(Number(limit), 50) : 20,
+      tag,
+    )
   }
 
   @Post('words')

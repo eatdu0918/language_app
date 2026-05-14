@@ -37,7 +37,21 @@ export class VocabularyService {
     level?: ProficiencyLevel,
     page = 1,
     limit = 20,
+    tag?: string,
   ): Promise<PaginatedResponse<VocabularyWord>> {
+    if (tag) {
+      // simple-array 컬럼은 LIKE로 검색
+      const [data, total] = await this.wordRepo
+        .createQueryBuilder('w')
+        .where('w.language = :language', { language })
+        .andWhere('w.tags LIKE :tag', { tag: `%${tag}%` })
+        .orderBy('w.word', 'ASC')
+        .skip((page - 1) * limit)
+        .take(limit)
+        .getManyAndCount()
+      return { data, total, page, limit }
+    }
+
     const [data, total] = await this.wordRepo.findAndCount({
       where: { language, ...(level ? { level } : {}) },
       order: { level: 'ASC', word: 'ASC' },

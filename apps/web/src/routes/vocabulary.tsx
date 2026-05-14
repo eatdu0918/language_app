@@ -35,6 +35,9 @@ const EMPTY_FORM: AddWordForm = {
 
 type Tab = 'review' | 'browse'
 
+const EN_EXAM_TAGS = ['전체', 'TOEIC-200', 'TOEIC-400', 'TOEIC-600', 'TOEIC-800', 'TOEIC-900'] as const
+const JA_EXAM_TAGS = ['전체', 'JLPT-N5', 'JLPT-N4', 'JLPT-N3', 'JLPT-N2', 'JLPT-N1'] as const
+
 export function VocabularyPage() {
   const qc = useQueryClient()
   const [tab, setTab] = useState<Tab>('review')
@@ -42,8 +45,11 @@ export function VocabularyPage() {
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [bankPage, setBankPage] = useState(1)
+  const [examTag, setExamTag] = useState<string>('전체')
   const [showAddForm, setShowAddForm] = useState(false)
   const [form, setForm] = useState<AddWordForm>(EMPTY_FORM)
+
+  const activeTag = examTag === '전체' ? undefined : examTag
 
   const { data: dueWords, isLoading: dueLoading } = useQuery({
     queryKey: ['vocabulary', 'due', lang],
@@ -52,8 +58,12 @@ export function VocabularyPage() {
   })
 
   const { data: wordBankPage, isLoading: bankLoading } = useQuery({
-    queryKey: ['vocabulary', 'words', lang, bankPage],
-    queryFn: () => api.get<PaginatedResponse<VocabularyWord>>(`/vocabulary/words?language=${lang}&page=${bankPage}&limit=20`),
+    queryKey: ['vocabulary', 'words', lang, bankPage, activeTag],
+    queryFn: () => {
+      const params = new URLSearchParams({ language: lang, page: String(bankPage), limit: '20' })
+      if (activeTag) params.set('tag', activeTag)
+      return api.get<PaginatedResponse<VocabularyWord>>(`/vocabulary/words?${params.toString()}`)
+    },
     enabled: tab === 'browse',
   })
 
@@ -103,7 +113,10 @@ export function VocabularyPage() {
     setCurrent(0)
     setFlipped(false)
     setBankPage(1)
+    setExamTag('전체')
   }
+
+  const examTags = lang === 'en' ? EN_EXAM_TAGS : JA_EXAM_TAGS
 
   return (
     <div className={styles.container}>
@@ -140,6 +153,19 @@ export function VocabularyPage() {
 
       {tab === 'browse' && (
         <>
+          {/* 시험 레벨 필터 */}
+          <div className={styles.examTagBar}>
+            {examTags.map((tag) => (
+              <button
+                key={tag}
+                className={`${styles.examTag} ${examTag === tag ? styles.examTagActive : ''}`}
+                onClick={() => { setExamTag(tag); setBankPage(1) }}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
           {showAddForm && (
             <form
               className={styles.addForm}

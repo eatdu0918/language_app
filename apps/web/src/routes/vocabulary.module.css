@@ -1,5 +1,33 @@
 .container { max-width: 680px; margin: 0 auto; }
 
+/* 시험 레벨 태그 필터 */
+.examTagBar {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.examTag {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.examTag:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.examTagActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
 .center {
   display: flex;
   align-items: center;

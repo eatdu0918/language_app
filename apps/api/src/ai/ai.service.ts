@@ -56,6 +56,46 @@ Scenario: ${scenario}.
     ])
   }
 
+  async generateExamQuestions(
+    examType: 'toeic' | 'jlpt',
+    level: string,
+    count: number,
+  ): Promise<string> {
+    const levelDesc =
+      examType === 'toeic'
+        ? `TOEIC (목표 점수 ${level.replace('toeic-', '')}점대)`
+        : `JLPT ${level}`
+    const lang = examType === 'toeic' ? 'English' : 'Japanese'
+
+    return this.provider.chat([
+      { role: 'system', content: 'You are a language exam question generator. Respond ONLY with a valid JSON array. No markdown, no explanation, just the JSON.' },
+      {
+        role: 'user',
+        content: `Generate exactly ${count} ${levelDesc} exam questions for Korean learners studying ${lang}.
+The questions should test ${lang} at the ${level} proficiency level.
+Mix "vocabulary" and "grammar" categories.
+
+Return ONLY this JSON array:
+[
+  {
+    "category": "vocabulary",
+    "question": "question text",
+    "options": ["option A", "option B", "option C", "option D"],
+    "answer": 0,
+    "explanation": "한국어로 정답 해설"
+  }
+]
+
+Rules:
+- answer must be the index (0-3) of the correct option in options array
+- options must have exactly 4 items
+- explanation must be in Korean
+- question may be in ${lang} or Korean
+- Do NOT add any text outside the JSON array`,
+      },
+    ])
+  }
+
   async adjustDocumentLevel(
     content: string,
     targetLevel: string,

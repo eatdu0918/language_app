@@ -13,6 +13,7 @@ import { DocumentsModule } from './documents/documents.module'
 import { ConversationModule } from './conversation/conversation.module'
 import { AiModule } from './ai/ai.module'
 import { SpeechModule } from './speech/speech.module'
+import { ExamModule } from './exam/exam.module'
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SpeechModule } from './speech/speech.module'
     ConversationModule,
     AiModule,
     SpeechModule,
+    ExamModule,
   ],
 })
 export class AppModule {}

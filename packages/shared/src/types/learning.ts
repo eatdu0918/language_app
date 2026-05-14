@@ -1,4 +1,4 @@
-import type { SupportedLanguage, ProficiencyLevel } from './language'
+import type { SupportedLanguage, ProficiencyLevel, ExamType, ExamLevel } from './language'
 
 // Placement test
 export interface PlacementQuestion {
@@ -78,4 +78,47 @@ export interface GrammarCorrection {
   original: string
   corrected: string
   explanation: string
+}
+
+// 시험 준비 (TOEIC / JLPT)
+export interface ExamQuestion {
+  id: string
+  examType: ExamType
+  level: ExamLevel
+  category: 'vocabulary' | 'grammar' | 'reading'
+  question: string
+  options: string[]
+  answer: number       // 정답 인덱스 (0~3)
+  explanation: string
+}
+
+export interface SessionAnswer {
+  questionId: string
+  selected: number
+  correct: boolean
+}
+
+export interface ExamSession {
+  id: string
+  examType: ExamType
+  level: ExamLevel
+  questions: ExamQuestion[]
+  answers: SessionAnswer[]
+  score: number
+  totalQuestions: number
+  completedAt: string | null
+  startedAt: string
+}
+
+export interface ExamLevelStats {
+  level: ExamLevel
+  bestScore: number
+  attempts: number
+  lastAttemptAt: string | null
+  passed: boolean   // 70% 이상
+}
+
+export interface ExamStats {
+  toeic: ExamLevelStats[]
+  jlpt: ExamLevelStats[]
 }

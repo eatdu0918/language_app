@@ -8,6 +8,7 @@ import { ConversationPage } from './routes/conversation'
 import { LoginPage } from './routes/login'
 import { PlacementPage } from './routes/placement'
 import { BillingPage } from './routes/billing'
+import { ExamPage } from './routes/exam'
 
 const rootRoute = createRootRoute({ component: RootLayout })
 
@@ -18,6 +19,7 @@ const documentsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/do
 const conversationRoute = createRoute({ getParentRoute: () => rootRoute, path: '/conversation', component: ConversationPage })
 const placementRoute = createRoute({ getParentRoute: () => rootRoute, path: '/placement', component: PlacementPage })
 const billingRoute = createRoute({ getParentRoute: () => rootRoute, path: '/billing', component: BillingPage })
+const examRoute = createRoute({ getParentRoute: () => rootRoute, path: '/exam', component: ExamPage })
 
 export const routeTree = rootRoute.addChildren([
   loginRoute,
@@ -27,4 +29,5 @@ export const routeTree = rootRoute.addChildren([
   conversationRoute,
   placementRoute,
   billingRoute,
+  examRoute,
 ])
